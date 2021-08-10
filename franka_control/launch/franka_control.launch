@@ -9,8 +9,6 @@
   <param if="$(eval arg('load_gripper') and setup=='grasp')"
     name="robot_description" textfile="$(find end_effector_control)/config/grasp_panda.urdf"/>
 
-  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find franka_description)/robots/panda_arm.urdf.xacro hand:=$(arg load_gripper)" />
-
   <include file="$(find franka_gripper)/launch/franka_gripper.launch" if="$(arg load_gripper)">
     <arg name="robot_ip" value="$(arg robot_ip)" />
   </include>
