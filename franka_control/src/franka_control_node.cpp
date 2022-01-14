@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
 
   ros::NodeHandle public_node_handle;
   ros::NodeHandle node_handle("~");
-
+  
   franka_hw::FrankaHW franka_control;
   if (!franka_control.init(public_node_handle, node_handle)) {
     ROS_ERROR("franka_control_node: Failed to initialize FrankaHW class. Shutting down!");
@@ -27,6 +27,10 @@ int main(int argc, char** argv) {
   }
 
   franka::Robot& robot = franka_control.robot();
+
+  // Do not see output from this
+  //ROS_DEBUG_STREAM("robot limit_rate: " << robot.readOnce());
+  ROS_ERROR_STREAM("robot limit_rate: " << franka_control.get_limit_rate_());
 
   std::atomic_bool has_error(false);
 
@@ -60,6 +64,7 @@ int main(int argc, char** argv) {
 
   while (ros::ok()) {
     ros::Time last_time = ros::Time::now();
+    ROS_INFO_STREAM("robot limit_rate: " << franka_control.get_limit_rate_());
 
     // Wait until controller has been activated or error has been recovered
     while (!franka_control.controllerActive() || has_error) {
@@ -80,6 +85,7 @@ int main(int argc, char** argv) {
       franka_control.control([&](const ros::Time& now, const ros::Duration& period) {
         if (period.toSec() == 0.0) {
           // Reset controllers before starting a motion
+          // ROS_ERROR_STREAM("robot limit_rate: " << franka_control.get_limit_rate_());
           control_manager.update(now, period, true);
           franka_control.checkJointLimits();
           franka_control.reset();

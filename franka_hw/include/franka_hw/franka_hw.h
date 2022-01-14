@@ -43,6 +43,9 @@ class FrankaHW : public hardware_interface::RobotHW {
    */
   FrankaHW();
 
+  // MOVED THIS UP HERE DUE TO PROTECTED ERRORS WHEN ATTEMPTING TO LOG
+  std::function<bool()> get_limit_rate_;
+
   virtual ~FrankaHW() override = default;
 
   /**
@@ -508,7 +511,8 @@ class FrankaHW : public hardware_interface::RobotHW {
   ControlMode current_control_mode_ = ControlMode::None;
 
   std::function<franka::ControllerMode()> get_internal_controller_;
-  std::function<bool()> get_limit_rate_;
+  // MOVING get_limit_rate_ to public (hopefully doesn't break anything)
+  //std::function<bool()> get_limit_rate_;
   std::function<double()> get_cutoff_frequency_;
   std::function<void(franka::Robot&, Callback)> run_function_;
 };
